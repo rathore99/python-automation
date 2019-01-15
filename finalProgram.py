@@ -176,9 +176,18 @@ class CollectInfo:
 		cnt=1
 		for info in self.infoCollection:
 			sheet.cell(row=cnt,column=1,value=cnt)
-			sheet.cell(row=cnt,column=2,value=info['name'])
-			sheet.cell(row=cnt,column=3,value=info['email'])
-			sheet.cell(row=cnt,column=4,value=info['mobile'])
+			try:
+				sheet.cell(row=cnt,column=2,value=info['name'])
+			except KeyError:
+				sheet.cell(row=cnt,column=2,value="NULL")
+			try:
+				sheet.cell(row=cnt,column=3,value=info['email'])
+			except KeyError:
+				sheet.cell(row=cnt,column=3,value="NULL")
+			try:
+				sheet.cell(row=cnt,column=4,value=info['mobile'])
+			except KeyError:
+				sheet.cell(row=cnt,column=4,value="NULL")
 			#print(cnt," ",info) # to print all collected info name ,email and phone
 			cnt+=1
 			
@@ -190,7 +199,12 @@ class CollectInfo:
 #---------------------------#
 
 def main():
-	path1 = sys.argv[1]
+	try:
+		path1 = sys.argv[1]
+	except IndexError:
+		print("enter path of directory where files are stored to retrieve information ")
+		path1 = input()
+		
 	obj = CollectInfo(path1)
 	obj.collectfiles()
 	#obj.printDetails()
