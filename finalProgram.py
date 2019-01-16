@@ -6,7 +6,7 @@ import subprocess #for linux commands
 import random, string #to genrate random names
 import openpyxl as excel # to write info in excel sheet
 from threading import * # for multithreading
-
+import datetime
 
 
 class CollectInfo:
@@ -25,26 +25,41 @@ class CollectInfo:
 	
 	#function to traverse all available files in folder
 	def collectfiles(self):
+		
 		for (dirname,dirs,files) in os.walk(self.path1):
 			for filename in files:
 				if(filename.endswith('.docx')):
 					x = os.path.join(dirname,filename)
-					self.DocFiles.append(os.path.abspath(x))
+					y=os.path.abspath(x)
+					self.DocFiles.append(y)
+					
 				elif(filename.endswith('.pdf')):
-					self.pdfFiles.append(os.path.abspath(os.path.join(dirname,filename)))	
-	
+					x=os.path.abspath(os.path.join(dirname,filename))
+					self.pdfFiles.append(x)
+						
+		
 	#to print pdf and docs files name
 	def printDetails(self):
+		fileObj = open("FilesVisited.txt",'w')
+		str1 =datetime.datetime.now().strftime ("%Y-%m-%d %H:%M:%S")
+		fileObj.write((str1+"\n\n"))
+		fileObj.write("List of all pdf and docx files\n\n")
+		i=1
 		for files in self.pdfFiles:
-			print(files)				
+			fileObj.write((str(i)+". "+files))
+			fileObj.write("\n")
+			i+=1			
 		for files in self.DocFiles:
-			print(files)
-	
+			fileObj.write((str(i)+". "+files))
+			fileObj.write("\n")
+			i+=1
+		fileObj.close()
 	#to change director and create directory
 	def osStuff(self):
 		pathHome = os.path.expanduser('~')+'/Desktop'
 		os.chdir(pathHome)
 		str1 = "TextFiles"
+		Thread(target=self.printDetails()).start()
 		try:
 			os.mkdir(str1)
 		except FileExistsError:
@@ -204,7 +219,8 @@ def main():
 	except IndexError:
 		print("enter path of directory where files are stored to retrieve information ")
 		path1 = input()
-		
+	print("\n"*3)
+	print("wait for sometime while we gather required information")	
 	obj = CollectInfo(path1)
 	obj.collectfiles()
 	#obj.printDetails()
@@ -217,7 +233,15 @@ def main():
 	while(active_count()>1):# wait to finish working of all threads
 		continue	
 	obj.createExcelSheet()
-
+	
+	print("#############################")
+	print("Important message ")
+	print("#############################")
+	print("Please check your desktop directory")
+	print("a directory with name TextFiles is created and and demo.xlx files with all data is there ")
+	print("A text file \"FilesVisited.txt\" contains list of files used to get information")
+	print("thank you !!! Good Byye")
+	print("\n"*2)
 
 #------------------------------------------------------------------------------------------------	
 if __name__== "__main__":
